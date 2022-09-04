@@ -31,6 +31,7 @@ jobs:
       - name: Deploying
         uses: peaceiris/actions-gh-pages@v3.7.3
         with:
+          deploy_key: ${{ secrets.ACCESS_TOKEN }}
           publish_branch: github-pages
           external_repository: johnlozier/Website
           publish_dir: ./dist
