@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+	margin: 0;
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+	user-select: none;
+	font-family: "open sans";
+}
+
+[data-tooltip]:before {
+	font-size: 1rem;
+}
+
+[contenteditable]:empty:not(:focus):before{
+	content:attr(data-ph);
+	opacity: 0.7;
+}
+
+@font-face {
+	font-family: "open sans";
+	src: url("./fonts/OpenSans.ttf");
+}
