@@ -57,6 +57,7 @@ const Index = () => {
 		event.key.match(/^(Tab|\/|')$/gm) ? event.preventDefault() : null;
 		if (event.target == document.body) {
 			if (event.shiftKey && event.key == "Enter") {
+				setEvent(event);
 				setRestart(true);
 				setScreen("default");
 			} else

@@ -27,7 +27,9 @@ export const getAccuracy = () =>
 
 export const SetWpm = (time: Accessor<number>, typed: Accessor<string>, preview: Accessor<string>, event: Accessor<KeyboardEvent | undefined>) => {
 	createEffect((prev: string) => {
-		setRawLetters(current => { return current + (untrack(() => event())?.key != "Enter" ? typed().split("\n").slice(-1)[0].length - prev.split("\n").slice(-1)[0].length : untrack(() => preview()).split("\n")[0].length == typed().split("\n")[0].length ? 1 : 0) });
+		!(untrack(() => event())?.key == "Enter" && untrack(() => event())?.shiftKey) ?
+		setRawLetters(current => { return current + (untrack(() => event())?.key != "Enter" ? typed().split("\n").slice(-1)[0].length - prev.split("\n").slice(-1)[0].length : untrack(() => preview()).split("\n")[0].length == typed().split("\n")[0].length ? 1 : 0) }) :
+		null;
 		return typed();
 	}, "");
 

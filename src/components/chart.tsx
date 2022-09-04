@@ -172,13 +172,16 @@ const Chart = (props: { scales: boolean, time: Accessor<number> }) => {
 export default Chart;
 
 export const resetChart = () => {
-	setChartData([[],[{
-		x: 0,
-		y: 0,
-	}],[{
-		x: 0,
-		y: 0,
-	}]]);
+	setChartData([
+		[],
+		[{
+			x: 0,
+			y: 0,
+		}],[{
+			x: 0,
+			y: 0,
+		}]
+	]);
 
 	resetWpm();
 };

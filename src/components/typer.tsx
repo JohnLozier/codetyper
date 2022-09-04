@@ -12,7 +12,7 @@ const Typer = (props: { typed: Accessor<string>, setTyped: Setter<string>, previ
 	};
 	
 	createEffect(on(props.event, () =>
-		props.event() && parseInt(getSetting("time")) - props.time() / 10 > 0 ? props.setTyped(current => props.preview()[current.slice(0, props.typed().length).includes("\n") ? props.preview().split("\n")[0].length + props.typed().length - current.split("\n")[0].length : current.length] != "\n" || props.event()?.key == "Backspace" || props.event()?.key == "Enter" || (props.event()?.key == "z" && props.event()?.ctrlKey) ? (() => {
+		props.event() && parseInt(getSetting("time")) - props.time() / 10 > 0 && !(props.event()?.key == "Enter" && props.event()?.shiftKey) ? props.setTyped(current => props.preview()[current.slice(0, props.typed().length).includes("\n") ? props.preview().split("\n")[0].length + props.typed().length - current.split("\n")[0].length : current.length] != "\n" || props.event()?.key == "Backspace" || props.event()?.key == "Enter" || (props.event()?.key == "z" && props.event()?.ctrlKey) ? (() => {
 			switch (props.event()?.key) {
 				case "Enter":
 					props.setPreview(prev => current.split("\n").length > 1 ? prev.split("\n").splice(1).join("\n") : prev);
