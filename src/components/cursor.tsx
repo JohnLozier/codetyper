@@ -7,7 +7,7 @@ const Cursor = (props: { typed: Accessor<string>, preview: Accessor<string>, tim
 	let cursorRef: HTMLDivElement;
 
 	createEffect(on(props.typed, (current) => {
-		cursorRef.style.left = `${ props.preview().split("\n")[ current.includes("\n") ? 1 : 0 ].slice(0, current.split("\n").slice(-1)[0].length).replace(/\t/g, "____").length * 0.825 }rem`;
+		cursorRef.style.left = `${ props.preview().split("\n")[ current.includes("\n") && props.preview().split("\n")[1] ? 1 : 0 ].slice(0, current.split("\n").slice(-1)[0].length).replace(/\t/g, "____").length * 0.825 ?? 0 }rem`;
 		cursorRef.style.top = `${ current.split("\n").length * 2 - 2 }rem`; 
 	}))
 

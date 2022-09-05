@@ -6,10 +6,11 @@ import { getSetting } from "./changeSetting";
 import type { Setter, Accessor } from "solid-js";
 import type { GithubResponse } from "../types/GithubResponse";
 import { RemoveToast, SetToast, ToastExists } from "./toast";
-import { wait } from './utils';
+import { wait } from "./utils";
+import { CachedFile, File } from "../types/File";
 
 let Fetching = false;
-let cachedFile: string;
+let cachedFile: CachedFile;
 
 export const SetCache = async(preventMulti: boolean, reset?: Setter<boolean>) => {
 	if (!sessionStorage.getItem("files") || !preventMulti) {
@@ -24,11 +25,12 @@ export const SetCache = async(preventMulti: boolean, reset?: Setter<boolean>) =>
 				timeout: 10000
 			});
 
-			sessionStorage.setItem("files", JSON.stringify(data.items.map(({ name, path, url, repository }) => {
+			sessionStorage.setItem("files", JSON.stringify(data.items.map(({ name, path, url, html_url, repository }) => {
 				return {
 					name: name,
 					path: path,
 					url: url,
+					html_url: html_url,
 					repository: {
 						full_name: repository.full_name
 					}
@@ -42,21 +44,29 @@ export const SetCache = async(preventMulti: boolean, reset?: Setter<boolean>) =>
 
 	cachedFile = await GetFile(preventMulti);
 
-	cachedFile && reset ? reset(true) : null;
+	cachedFile.content && reset ? reset(true) : null;
 
 	return cachedFile;
 };
 
-export const GetCache = async(setPreview: Setter<string>, preview: Accessor<string>) => {
+export const GetCache = async(setPreview: Setter<string>, preview: Accessor<string>, setFile: Setter<File>) => {
 
-	setPreview(cachedFile ?? await SetCache(true));
+	setPreview(cachedFile?.content ?? (await SetCache(true)).content);
+	setFile({
+		name: cachedFile?.name ?? "",
+		url: cachedFile?.url ?? ""
+	})
 
 	cachedFile = await GetFile();
 	
 	createEffect(async() => {
 		if (preview().split("\n").length < 5 && !Fetching) {
 			const File = cachedFile ?? await SetCache(true);
-			setPreview(current => `${ current }\n\n${ File }`);
+			setPreview(current => `${ current }\n\n${ File.content }`);
+			setFile({
+				name: File?.name ?? "",
+				url: File?.url ?? ""
+			})
 			cachedFile = await GetFile(true);
 		};
 	});
@@ -73,14 +83,22 @@ const GetFile = async(preventMulti?: boolean) => {
 			timeout: 5000
 		}).finally(() => preventMulti ? Fetching = false : null);
 
-		return Format(data);
+		return {
+			content: Format(data),
+			url: file.html_url,
+			name: file.name
+		};
 	} catch {
 		if (!ToastExists("codeSearchError")) {
 			SetToast("We are having trouble fetching that file", "textFetchError");
 			wait(() => RemoveToast("textFetchError"), "3s");
 		};
 		
-		return Format("");
+		return {
+			content: Format(""),
+			url: "",
+			name: ""
+		}
 	};
 };
 
@@ -96,7 +114,11 @@ export const Format = (data?: string | JSON | undefined) => {
 		.replace(/\n{3,}/gm, "\n\n") // remove extra whitespace
 		.replace(/[^ -~|\n|\t]|^[\t ]+$/gm, ""); // remove Unicode and extra indent's
 	
-	!data ? cachedFile = res : null;
+	!data ? cachedFile = {
+		content: res,
+		url: cachedFile.url,
+		name: cachedFile.name
+	} : null;
 
 	return res;
 };

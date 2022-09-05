@@ -7,5 +7,6 @@
 		"moduleResolution": "node",
 		"jsxImportSource": "solid-js",
 		"strict": true,
+		"allowSyntheticDefaultImports": true,
 	}
 }
