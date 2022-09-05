@@ -1,5 +1,5 @@
 
-name: Export to github pages
+name: Export to website/codetyper
 
 on:
   push:
