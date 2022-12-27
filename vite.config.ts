@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import solidPlugin from "vite-plugin-solid";
 
 const Config = defineConfig({
-	base: "",
+	base: "/codetyper/",
 	plugins: [
 		solidPlugin()
 	],
